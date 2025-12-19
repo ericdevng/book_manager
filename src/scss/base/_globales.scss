@@ -1,0 +1,33 @@
+h2 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.5rem;
+    border: 1px solid #000000;
+    text-align: center;
+}
+
+li{
+    list-style: none;
+}
+
+a{
+    text-decoration: none;
+    color: #000000;
+    padding-right: 2rem;
+}
+
+textarea {
+    field-sizing: auto;
+// //   width: 100rem;
+// //    height: 150px;
+// //   resize: none; /* Para deshabilitar el redimensionamiento por el usuario */
+}
+

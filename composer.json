@@ -1,0 +1,17 @@
+{
+    "name": "project/book-manager",
+    "description": "Practica backend",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Project\\BookManager\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Eric",
+            "email": "erosales9661@gmail.com"
+        }
+    ],
+    "require": {}
+}

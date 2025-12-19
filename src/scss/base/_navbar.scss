@@ -1,0 +1,66 @@
+@use 'base/variables' as *;
+@use 'base/mixins' as *;
+
+
+/* Mobile first: título + hamburguesa en la misma fila */
+.nav-bar {
+  display: flex;              // <-- importante en mobile
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+}
+
+/* quitar márgenes por defecto del H1 para que no empuje */
+.nav-bar h1 {
+  margin: 0;
+  line-height: 1;
+  font-size: 1.6rem;
+  /* controla cómo crece en la fila:
+     - flex: 0 1 auto -> ocupa solo lo que necesita
+     - flex: 1 -> ocupa el espacio restante (centrar la hamburguesa a la derecha) */
+  flex: 0 1 auto;
+}
+
+/* el icono hamburguesa (visible en mobile, oculto en desktop) */
+.mobile-menu {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  img {
+    width: 2.5rem;
+    height: auto;
+    display: block;
+  }
+
+  @include respond(desktop) {
+    display: none;
+    img {
+      display: none;
+    }
+  }
+}
+
+.mobile-menu.activo {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* el nav principal (oculto en mobile, visible en desktop) */
+.navigation {
+  display: none;
+
+  
+  &.mostrar {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @include respond(desktop) {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+}

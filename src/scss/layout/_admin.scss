@@ -1,0 +1,34 @@
+@use '../base' as *;
+
+.body-details {
+    background-color: $dijonFuerte;
+    padding: 1rem;
+
+    @include respond(tablet) {
+        padding: 2rem;
+    }
+
+    @include respond(desktop) {
+        padding: 3rem;
+    }
+}
+
+.header-display{
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.admin-table {
+  padding: 1rem;
+}
+.table-wrapper {
+   overflow-x: auto;
+   background-color: $dijon;
+}
+
+button {
+  margin-right: 0.5rem;
+}
+
+

@@ -1,0 +1,12 @@
+# Dependencias
+node_modules/
+vendor/
+
+# Archivos de entorno
+.env
+
+# Logs
+*.log
+
+# Cache
+.cache/
