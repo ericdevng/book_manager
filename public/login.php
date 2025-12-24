@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <a href="/book_manager/public/registrar.php" class="boton-blanco">Registrarme</a>
             </div>
 
-            <p>¿Olvidaste tu contraseña?</p>
+            <a href="/book_manager/public/res_pass.php"><p>¿Olvidaste tu contraseña?</p></a>
         </form>
     </div>
 

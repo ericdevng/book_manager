@@ -127,11 +127,33 @@ class Book {
         return $stmt -> fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // public static function deleteByUser(int $userId){
-    //     $pdo = Database::getInstance()->getConnection();
-    //     $stmt = $pdo -> prepare("SELECT * FROM books WHERE ")
-    // }
+    public static function deleteByUser(int $userId) {
+        $pdo = Database::getInstance()->getConnection();
 
+        $stmt = $pdo->prepare(
+            "SELECT id, filename FROM books WHERE user_id = :user_id"
+        );
+        $stmt->execute(['user_id' => $userId]);
+        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Borrar archivos
+        foreach ($books as $book) {
+            if (!empty($book['filename'])) {
+                $filePath = __DIR__ . '/../../uploads/book/' . $book['filename'];
+                if (file_exists($filePath)) {
+                    if (!unlink($filePath)) {
+                        error_log("No se pudo eliminar el archivo: {$filePath}");
+                    }
+                } else {
+                    error_log("Archivo faltante: {$filePath}");
+                }
+            }
+        }
+
+        // Borrar registros
+        $stmt = $pdo->prepare("DELETE FROM books WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $userId]);
+    }
 
 }
 

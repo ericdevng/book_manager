@@ -97,34 +97,82 @@ class User {
     }
 
 
-    // public static function deleteAccount(int $userId, string $pass){
-    //     $pdo = Database::getInstance()->getConnection();
-    //     $stmt = $pdo->prepare("SELECT password_hash FROM users WHERE id = :id");
-    //     $stmt->execute(['id' => $userId]);
-    //     $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    public static function deleteAccount(int $userId, string $pass){
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo->prepare("SELECT password_hash FROM users WHERE id = :id");
+        $stmt->execute(['id' => $userId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    //     if(!$user){
-    //         return "Usuario no encontrado.";
-    //     }
+        if(!$user){
+            return "Usuario no encontrado.";
+        }
 
-    //     if(!password_verify($pass, $user['password_hash'])){
-    //         return "Contraseña incorrecta.";
-    //     }
+        if(!password_verify($pass, $user['password_hash'])){
+            return "Contraseña incorrecta.";
+        }
 
-    //     try{
-    //         $pdo -> beginTransaction();
-    //         Book::deleteByUser(int $userId);
+        try{
+            $pdo -> beginTransaction();
+            Book::deleteByUser($userId);
 
-    //         $stmt = $pdo -> prepare("DELETE FROM users WHERE id = :id");
-    //         $stmt -> execute(['user_id' => $userId]);
+            $stmt = $pdo -> prepare("DELETE FROM users WHERE id = :user_id");
+            $stmt -> execute(['user_id' => $userId]);
 
-    //         $pdo -> commit();
-    //         return true;
-    //     }catch (Exception $e){
-    //         $pdo -> rollBack();
-    //         return "Error al eliminar la cuenta";
-    //     }
-    // }
+            $pdo -> commit();
+            return true;
+        }catch (Exception $e){
+            $pdo -> rollBack();
+            return $e -> getMessage();
+        }
+    }
+
+    public static function requestPassReset(string $email){
+        $pdo = Database::getInstance()->getConnection();
+        $stmt = $pdo -> prepare("SELECT id FROM users WHERE email = :email");
+        $stmt -> execute(['email' => $email]);
+        $user = $stmt -> fetch(PDO::FETCH_ASSOC);
+
+        if(!$user){
+            return true; //El usuario no debe saber que paso (seguridad temporal)
+        }
+
+        $token = bin2hex(random_bytes(32)); //TOKEN DESARROLLO
+
+        $expires = date('Y-m-d H:i:s', time() + 1800);
+
+        $stmt = $pdo -> prepare("UPDATE users SET reset_token = :token, reset_token_expires = :expires WHERE id = :id");
+
+        $stmt -> execute(['token' => $token, 'expires' => $expires, 'id' => $user['id']]);
+
+
+
+
+        return $token; //TOKEN DESARROLLO
+
+    }
+
+    public static function resetPassword(string $token, string $newPass){
+        $pdo = Database::getInstance()->getConnection();
+
+        $stmt = $pdo -> prepare("SELECT id, reset_token_expires FROM users WHERE reset_token = :token");
+        $stmt -> execute(['token' => $token]);
+        $user = $stmt -> fetch(PDO::FETCH_ASSOC);
+
+        if(!$user){
+            return "Token invalido";
+        }
+
+        if(strtotime($user['reset_token_expires']) < time()){
+            return "El token ha expirado";
+        }
+
+        $passHash = password_hash($newPass, PASSWORD_DEFAULT);
+
+        $stmt = $pdo -> prepare("UPDATE users SET password_hash = :password, reset_token = NULL, reset_token_expires = NULL WHERE id = :id");
+        $stmt -> execute(['password' => $passHash, 'id' => $user['id']]);
+        return true;
+    }
+
 
     
 }

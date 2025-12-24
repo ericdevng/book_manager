@@ -7,6 +7,10 @@ require_once '../includes/classes/User.php';
 session_start();
 verifySession();
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 if(!isset($_SESSION['user_id'])){
         die("Error, no hay ninguna sesion permitida para esta acción");
 }
@@ -61,16 +65,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = $result === true ? "Contraseña actualizada." : $result;
             break;
 
-        // case 'delete_account':
-        //     $userId = $_SESSION['user_id'];
-        //     $result = User::deleteAccount($id, $pass);
+        case 'delete_account':
 
+            if (empty($_POST['password'])) {
+                $message = "Debes ingresar tu contraseña.";
+                break;
+            }
 
-            
+            $result = User::deleteAccount($id, $_POST['password']);
 
+            if ($result === true) {
+                session_destroy();
+                header('Location: /book_manager/public/login.php');
+                exit;
+            } else {
+                $message = $result;
+            }
 
-
-        //     break;
+            break;
 
     }
 }
